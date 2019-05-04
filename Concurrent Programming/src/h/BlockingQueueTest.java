@@ -1,0 +1,89 @@
+package h;
+/**
+ * 阻塞队列解决并发编程中的线程安全问题
+ * @author 14792
+ *
+ */
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+
+public class BlockingQueueTest {
+	private static final int FILE_QUEUE_SIZE = 10;
+	private static final int SEARCH_THREADS = 100;
+	private static final File DUMMY = new File("");
+	private static BlockingQueue<File> queue = new LinkedBlockingDeque<>(FILE_QUEUE_SIZE);
+
+	public static void main(String[] args) {
+		try (Scanner in = new Scanner(System.in)) {
+			System.out.println("Entry the ditectory(eg: /opt/jdk 1.8.0/src):");
+			String directory = in.nextLine();
+			System.out.println("Entry the keyword(eg: volatile):");
+			String keyword = in.nextLine();
+
+			Runnable emurator = () -> {
+				try {
+					emurate(new File(directory));
+					queue.put(DUMMY);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			};
+			new Thread(emurator).start();
+
+			for (int i = 0; i < SEARCH_THREADS; i++) {
+				Runnable searcher = () -> {
+					try {
+						boolean isDone = false;
+						while (!isDone) {
+							File file = queue.take(); //如果队列空，则take()会阻塞
+							if (file == DUMMY) {
+								queue.put(DUMMY);
+								isDone = true;
+							} else {
+								search(file, keyword);
+							}
+						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				};
+				new Thread(searcher).start();
+			}
+		}
+	}
+
+	public static void emurate(File directory) throws InterruptedException {
+		File[] files = directory.listFiles();
+
+		for (File file : files) {
+			if (!file.isDirectory()) {
+				queue.put(file); //如果队列忙，put()会阻塞
+			} else {
+				emurate(file);
+			}
+		}
+	}
+
+	public static void search(File file, String keyWord) throws FileNotFoundException {
+		try (Scanner in = new Scanner(file, "utf-8")) {
+			int lineNumber = 0;
+			while (in.hasNextLine()) {
+				lineNumber++;
+				String line = in.nextLine();
+				if (line.contains(keyWord)) {
+					System.out.printf("%s:%d:%s%n", file.getPath(), lineNumber, line);
+				}
+			}
+		}
+	}
+}

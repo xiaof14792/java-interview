@@ -1,0 +1,25 @@
+package o;
+
+public class CountDownLatchDemo {
+	public static void main(String[] args) {
+		
+	}
+	
+	class Task implements Runnable{
+		private CountDownLatchDemo countDownLatch;
+		
+		
+		public Task(CountDownLatchDemo countDownLatch) {
+			this.countDownLatch = countDownLatch;
+		}
+
+
+		@Override
+		public void run() {
+			System.out.println("线程" + Thread.currentThread().getName() + "已经到达：" + System.currentTimeMillis());
+			
+		}
+		
+	}
+}
+ 

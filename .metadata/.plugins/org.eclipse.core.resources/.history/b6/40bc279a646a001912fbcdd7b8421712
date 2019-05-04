@@ -1,0 +1,9 @@
+package h;
+/**
+ * 阻塞队列解决线程安全问题
+ * @author 14792
+ *
+ */
+public class BlockingQueueTest {
+
+}

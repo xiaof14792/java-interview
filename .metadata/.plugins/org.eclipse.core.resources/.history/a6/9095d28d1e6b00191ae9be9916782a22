@@ -1,0 +1,25 @@
+package o;
+
+import java.util.concurrent.Exchanger;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class ExchangerDemo {
+	
+	
+	public static void main(String[] args) {
+		Exchanger<String> exchanger = new Exchanger<>();
+		//代表男生和女生
+		ExecutorService service = Executors.newFixedThreadPool(2);
+		
+		service.execute(() -> {
+			try {
+				//男生对女生说的话
+				String girl = ex
+			} catch (InterruptedException e) {
+				// TODO: handle exception
+			}
+		});
+	}
+}

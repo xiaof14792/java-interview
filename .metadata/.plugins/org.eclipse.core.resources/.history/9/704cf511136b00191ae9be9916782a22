@@ -1,0 +1,31 @@
+package l;
+/**
+ * 控制任务组
+ * @author 14792
+ *
+ */
+public class ExecutorCompletionTest {
+	public static void main(String[] args) {
+		Runnable r1 = () ->{
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			System.out.println("第一个线程");
+		};
+		
+		Runnable r2 = () ->{
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			System.out.println("第二个线程");
+		};
+	}
+}

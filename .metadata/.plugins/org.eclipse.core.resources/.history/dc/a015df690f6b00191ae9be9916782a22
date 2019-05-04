@@ -1,0 +1,10 @@
+package k;
+
+public class ScheduledExcutorTest {
+	
+	
+	
+	Runnable r = () ->{
+		System.out.println("我的家在湖北红安县");
+	};
+}

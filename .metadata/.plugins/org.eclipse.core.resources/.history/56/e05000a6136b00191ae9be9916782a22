@@ -1,0 +1,45 @@
+package l;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Executors;
+
+import org.omg.CORBA.INTERNAL;
+
+/**
+ * 控制任务组
+ * @author 14792
+ *
+ */
+public class ExecutorCompletionTest {
+	public static void main(String[] args) {
+		Callable<Integer> r1 = () ->{
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			System.out.println("第一个线程");
+			return 1;
+		};
+		
+		Callable<Integer> r2 = () ->{
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			System.out.println("第二个线程");
+			return 2;
+		};
+		
+		Executor pool = Executors.newCachedThreadPool();
+		ExecutorCompletionService<Integer> service = new ExecutorCompletionService<>(pool);
+		service.submit(r1);
+	}
+}

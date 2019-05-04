@@ -1,0 +1,66 @@
+package m;
+
+import java.util.Random;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
+import java.util.function.DoublePredicate;
+
+import javax.security.auth.x500.X500Principal;
+
+public class ForkJoinTest {
+	public static void main(String[] args) {
+		final int SIZE = 10000000;
+		double[] numbers = new double[SIZE];
+		for (int i = 0; i < numbers.length; i++) {
+			numbers[i] = Math.random();
+		}
+		
+		DoublePredicate filter = new DoublePredicate() {
+			
+			@Override
+			public boolean test(double value) {
+				
+				return x > 0.5 ;
+			}
+		};
+		Counter counter = new Counter(numbers, 0, numbers.length, filter);
+		ForkJoinPool forkJoinPool = new ForkJoinPool();
+		forkJoinPool.invoke(counter);
+		System.out.println(counter.join());
+	}
+
+	class Counter extends RecursiveTask<Integer> {
+		public static final int THRESHOLD = 1000;
+		private double[] values;
+		private int from;
+		private int to;
+		private DoublePredicate filter;
+
+		public Counter(double[] values, int from, int to, DoublePredicate filter) {
+			this.values = values;
+			this.from = from;
+			this.to = to;
+			this.filter = filter;
+		}
+
+		@Override
+		protected Integer compute() {
+			if (to - from < THRESHOLD) {
+				int count = 0;
+				for (int i = 0; i < values.length; i++) {
+					if (filter.test(values[i])) {
+						count++;
+					}
+				}
+				return count;
+			} else {
+				int mid = from + (to - from) / 2;
+				Counter first = new Counter(values, from, mid, filter);
+				Counter second = new Counter(values, mid, to, filter);
+				invokeAll(first, second);
+				return first.join() + second.join();
+			}
+		}
+
+	}
+}
