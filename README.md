@@ -1,4 +1,4 @@
-# eclipse-java-interview
+# java-interview
 
 - Submit a full Java project for the first time.
 
